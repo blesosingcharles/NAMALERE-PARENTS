@@ -1,0 +1,353 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Namalere Parents' P.S. Portal | Ssemenggo Charles</title>
+    <!-- Tailwind for professional layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .glass-header {
+            background: rgba(30, 58, 138, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 4px solid #dc2626;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .input-field:focus {
+            border-color: #1e3a8a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+        }
+
+        /* Print styles for the report card */
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; }
+            .print-only { display: block !important; }
+            .report-box { border: 2px solid black !important; padding: 20px; }
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="pb-20">
+
+    <!-- Top Navigation Bar -->
+    <header class="glass-header sticky top-0 z-40 text-white p-4 shadow-lg no-print">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-lg font-bold tracking-tight">NAMALERE PARENTS' P.S.</h1>
+                <p class="text-[10px] uppercase tracking-widest text-blue-200">Teacher: Mr. Ssemenggo Charles</p>
+            </div>
+            <div class="bg-yellow-400 text-blue-900 px-3 py-1 rounded-full text-xs font-bold animate-pulse">
+                LIVE PORTAL
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 no-print">
+        
+        <!-- Welcome Message -->
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-slate-800">Hello, Charles! 👋</h2>
+            <p class="text-slate-500 text-sm">Manage your P.7 class results and reports below.</p>
+        </div>
+
+        <!-- Quick Entry Form -->
+        <section class="stat-card p-6 mb-8 border-t-4 border-blue-800">
+            <h3 class="font-bold text-slate-700 mb-4 flex items-center">
+                <span class="mr-2">📝</span> NEW MARKS ENTRY
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="col-span-full">
+                    <label class="text-xs font-bold text-slate-500 uppercase">Pupil's Full Name</label>
+                    <input type="text" id="pName" placeholder="Type name here..." class="input-field mt-1" list="pupil-suggestions">
+                    <datalist id="pupil-suggestions"></datalist>
+                </div>
+
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">Assessment Set</label>
+                    <select id="pSet" class="input-field mt-1">
+                        <option value="1">Assessment Set 1</option>
+                        <option value="2">Assessment Set 2</option>
+                        <option value="3">Assessment Set 3</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 col-span-full mt-2">
+                    <div>
+                        <label class="text-[10px] font-bold text-blue-700 uppercase">Mathematics</label>
+                        <input type="number" id="sMat" placeholder="0-100" class="input-field">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-blue-700 uppercase">English</label>
+                        <input type="number" id="sEng" placeholder="0-100" class="input-field">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-blue-700 uppercase">S.S.T</label>
+                        <input type="number" id="sSst" placeholder="0-100" class="input-field">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-bold text-blue-700 uppercase">Science</label>
+                        <input type="number" id="sSci" placeholder="0-100" class="input-field">
+                    </div>
+                </div>
+
+                <button onclick="saveData()" class="col-span-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg mt-4 transition transform active:scale-95 flex justify-center items-center">
+                    <span class="mr-2">✅</span> SAVE AND SYNC DATA
+                </button>
+            </div>
+        </section>
+
+        <!-- Pupil Records List -->
+        <section>
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-slate-700">PUPIL RECORDS</h3>
+                <span id="pupilCount" class="bg-slate-200 text-slate-700 px-3 py-1 rounded-full text-xs font-bold">0 Pupils</span>
+            </div>
+            
+            <div id="pupilList" class="space-y-3">
+                <!-- Records will appear here -->
+            </div>
+        </section>
+
+        <!-- Data Tools -->
+        <div class="mt-12 pt-8 border-t border-slate-200 text-center">
+            <button onclick="exportData()" class="text-xs text-blue-600 font-bold uppercase tracking-widest mx-4">Download Backup</button>
+            <button onclick="resetSystem()" class="text-xs text-red-400 font-bold uppercase tracking-widest mx-4">Reset Portal</button>
+        </div>
+    </main>
+
+    <!-- Report View Modal -->
+    <div id="reportModal" class="modal-overlay overflow-y-auto">
+        <div class="min-h-screen p-4 flex items-start justify-center">
+            <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 relative">
+                <div class="no-print flex justify-between mb-6">
+                    <button onclick="closeModal()" class="bg-slate-100 px-4 py-2 rounded-lg font-bold text-slate-600">← Back</button>
+                    <button onclick="window.print()" class="bg-green-600 text-white px-6 py-2 rounded-lg font-bold shadow-md">🖨️ Print Report</button>
+                </div>
+
+                <div id="reportSheet" class="report-box p-4 border border-slate-100">
+                    <!-- Report content injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let db = JSON.parse(localStorage.getItem('namalere_v12_db')) || {};
+
+        function saveData() {
+            const name = document.getElementById('pName').value.trim().toUpperCase();
+            const set = document.getElementById('pSet').value;
+            const marks = {
+                mat: document.getElementById('sMat').value,
+                eng: document.getElementById('sEng').value,
+                sst: document.getElementById('sSst').value,
+                sci: document.getElementById('sSci').value
+            };
+
+            if (!name) {
+                showToast("Please enter a pupil name");
+                return;
+            }
+
+            if (!db[name]) db[name] = {};
+            db[name][`set${set}`] = marks;
+
+            localStorage.setItem('namalere_v12_db', JSON.stringify(db));
+            
+            // Success Feedback
+            showToast("Marks Synced Successfully!");
+            clearFields();
+            refreshUI();
+        }
+
+        function refreshUI() {
+            const list = document.getElementById('pupilList');
+            const suggestions = document.getElementById('pupil-suggestions');
+            const countLabel = document.getElementById('pupilCount');
+            
+            list.innerHTML = '';
+            suggestions.innerHTML = '';
+            
+            const names = Object.keys(db).sort();
+            countLabel.innerText = `${names.length} Pupil${names.length === 1 ? '' : 's'}`;
+
+            if (names.length === 0) {
+                list.innerHTML = `<div class="text-center py-10 text-slate-400 italic text-sm">No records found. Enter marks above to start.</div>`;
+            }
+
+            names.forEach(name => {
+                // Add to list
+                const row = document.createElement('div');
+                row.className = 'stat-card p-4 flex justify-between items-center border-l-4 border-blue-600';
+                row.innerHTML = `
+                    <div>
+                        <div class="font-bold text-slate-800">${name}</div>
+                        <div class="text-[10px] text-slate-400">Class: P.7 | ${Object.keys(db[name]).length} Sets Entered</div>
+                    </div>
+                    <button onclick="viewReport('${name}')" class="bg-blue-50 text-blue-700 px-4 py-2 rounded-lg font-bold text-xs uppercase hover:bg-blue-700 hover:text-white transition">Report</button>
+                `;
+                list.appendChild(row);
+
+                // Add to suggestions
+                const opt = document.createElement('option');
+                opt.value = name;
+                suggestions.appendChild(opt);
+            });
+        }
+
+        function getAgg(score) {
+            let s = parseInt(score);
+            if (isNaN(s)) return { a: 9, g: 'F9' };
+            if (s >= 90) return { a: 1, g: 'D1' };
+            if (s >= 80) return { a: 2, g: 'D2' };
+            if (s >= 75) return { a: 3, g: 'C3' };
+            if (s >= 70) return { a: 4, g: 'C4' };
+            if (s >= 60) return { a: 5, g: 'C5' };
+            if (s >= 50) return { a: 6, g: 'C6' };
+            if (s >= 45) return { a: 7, g: 'P7' };
+            if (s >= 35) return { a: 8, g: 'P8' };
+            return { a: 9, g: 'F9' };
+        }
+
+        function viewReport(name) {
+            const data = db[name];
+            let html = `
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold">NAMALERE PARENTS' PRIMARY SCHOOL</h1>
+                    <p class="text-sm italic">"Knowledge is Power"</p>
+                    <p class="text-sm font-bold mt-2">P.O. BOX 123, Wakiso, Uganda</p>
+                    <div class="h-1 bg-black w-full my-4"></div>
+                    <h2 class="text-xl font-bold underline">END OF TERM PERFORMANCE REPORT</h2>
+                </div>
+                
+                <div class="flex justify-between mb-4 text-sm">
+                    <div><strong>NAME:</strong> ${name}</div>
+                    <div><strong>TERM:</strong> THREE</div>
+                    <div><strong>CLASS:</strong> P.7</div>
+                </div>
+            `;
+
+            [1, 2, 3].forEach(set => {
+                const s = data[`set${set}`];
+                if (s) {
+                    const m = getAgg(s.mat), e = getAgg(s.eng), st = getAgg(s.sst), sc = getAgg(s.sci);
+                    const total = m.a + e.a + st.a + sc.a;
+                    const div = total <= 12 ? "I" : (total <= 24 ? "II" : (total <= 29 ? "III" : "IV"));
+
+                    html += `
+                        <div class="mb-6">
+                            <h4 class="font-bold bg-slate-100 p-1 text-sm border">ASSESSMENT SET ${set}</h4>
+                            <table class="w-full text-xs text-center border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-50">
+                                        <th class="border p-2">SUBJECT</th>
+                                        <th class="border p-2">MARKS</th>
+                                        <th class="border p-2">AGG</th>
+                                        <th class="border p-2">GRADE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td class="border p-2 text-left font-bold">MATHEMATICS</td><td class="border p-2">${s.mat}</td><td class="border p-2">${m.a}</td><td class="border p-2">${m.g}</td></tr>
+                                    <tr><td class="border p-2 text-left font-bold">ENGLISH</td><td class="border p-2">${s.eng}</td><td class="border p-2">${e.a}</td><td class="border p-2">${e.g}</td></tr>
+                                    <tr><td class="border p-2 text-left font-bold">S.S.T</td><td class="border p-2">${s.sst}</td><td class="border p-2">${st.a}</td><td class="border p-2">${st.g}</td></tr>
+                                    <tr><td class="border p-2 text-left font-bold">SCIENCE</td><td class="border p-2">${s.sci}</td><td class="border p-2">${sc.a}</td><td class="border p-2">${sc.g}</td></tr>
+                                    <tr class="bg-slate-50 font-bold">
+                                        <td colspan="2" class="border p-2">TOTAL AGGREGATE: ${total}</td>
+                                        <td colspan="2" class="border p-2">DIVISION: ${div}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
+                }
+            });
+
+            html += `
+                <div class="mt-10 pt-10 grid grid-cols-2 gap-8 text-sm italic">
+                    <div class="border-t border-black pt-2 text-center">Class Teacher's Signature</div>
+                    <div class="border-t border-black pt-2 text-center">Head Teacher's Stamp</div>
+                </div>
+            `;
+
+            document.getElementById('reportSheet').innerHTML = html;
+            document.getElementById('reportModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+
+        function clearFields() {
+            ['sMat', 'sEng', 'sSst', 'sSci'].forEach(id => document.getElementById(id).value = '');
+        }
+
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'fixed bottom-10 left-1/2 -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full text-sm font-bold z-50 shadow-2xl';
+            t.innerText = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2500);
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(db)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `namalere_backup_${new Date().toLocaleDateString()}.json`;
+            a.click();
+        }
+
+        function resetSystem() {
+            if(confirm("Factory Reset? This clears all pupil marks from this device.")) {
+                localStorage.clear();
+                db = {};
+                refreshUI();
+            }
+        }
+
+        // Initialize on load
+        refreshUI();
+    </script>
+</body>
+</html>
+
+```
